@@ -48,4 +48,8 @@ public class TestBase {
         driver.findElement(By.name("password")).sendKeys(password);
         driver.findElement(By.name("login")).click();
     }
+
+    public boolean areElementsPresent(WebDriver driver, By locator) {
+        return driver.findElements(locator).size() > 0;
+    }
 }
