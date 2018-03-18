@@ -62,3 +62,13 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 .gradle/
+.gradle/4.0/fileContent/fileContent.lock
+.gradle/4.0/taskHistory/fileSnapshots.bin
+.gradle/4.0/taskHistory/taskHistory.lock
+.idea/codeStyles/codeStyleConfig.xml
+.gradle/4.0/fileHashes/fileHashes.lock
+.gradle/4.0/taskHistory/taskHistory.lock
+.gradle/4.0/fileContent/fileContent.lock
+.gradle/4.0/fileHashes/fileHashes.lock
+.gradle/4.0/taskHistory/taskHistory.bin
+.idea/workspace.xml
