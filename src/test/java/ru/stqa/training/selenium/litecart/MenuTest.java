@@ -22,33 +22,42 @@ public class MenuTest extends TestBase {
     public void testCountriesOrder() {
         driver.get("http://localhost/litecart/admin/");
         login("admin", "admin");
-        goToCountryPage();
-        List<WebElement> rowCountries = getCountryRows();
-        checkCountriesOrder(rowCountries);
-        for (int i = 0; i < rowCountries.size(); i++) {
-            WebElement cellName = getCountryNameCell(rowCountries.get(i));
-            WebElement cellZones = getZonesAmountCell(rowCountries.get(i));
-            int zonesAmount = Integer.parseInt(cellZones.getAttribute("textContent"));
-            if (zonesAmount != 0) {
-                cellName.findElement(By.cssSelector("a")).click();
-                WebElement zoneTable = driver.findElement(By.id("table-zones"));
-                List<WebElement> zoneNames = zoneTable.findElements(By.cssSelector("input[type='hidden'][name*='[name]']"));
-                String previousZoneName = "";
-                for (int n = 0; n < zoneNames.size(); n++) {
-                    String zoneName = zoneNames.get(n).getAttribute("value");
-                    if (n != 0) {
-                        assertTrue(zoneName.compareTo(previousZoneName) > 0);
-                    }
-                    previousZoneName = zoneName;
-                }
-                goToCountryPage();
-                rowCountries = getCountryRows();
+        goToMenuItemPage("Countries");
+        checkCountriesOrder();
+    }
 
+    @Test
+    public void testGeoZonesOrder() {
+        driver.get("http://localhost/litecart/admin/");
+        login("admin", "admin");
+        goToMenuItemPage("Geo Zones");
+        checkGeoZonesOrder();
+    }
+
+    private void checkGeoZonesOrder() {
+        List<WebElement> zoneTableRows = getZoneTableRows();
+        for (int i = 0; i < zoneTableRows.size(); i++) {
+            zoneTableRows.get(i).findElement(By.xpath(".//td[3]/a")).click();
+            List<WebElement> zoneRows = driver.findElements(By.xpath("//table[@id='table-zones']//tr[./td/select]"));
+            String previousZoneName = "";
+            for (int n = 0; n < zoneRows.size(); n++) {
+                String zoneName = zoneRows.get(n).findElement(By.xpath(".//select[contains(@name, '[zone_code]')]/option[@selected='selected']")).getText();
+                if (n != 0) {
+                    assertTrue(zoneName.compareTo(previousZoneName) > 0);
+                }
+                previousZoneName = zoneName;
             }
+            goToMenuItemPage("Geo Zones");
+            zoneTableRows = getZoneTableRows();
         }
     }
 
-    private void checkCountriesOrder(List<WebElement> rowCountries) {
+    private List<WebElement> getZoneTableRows() {
+        return driver.findElements(By.cssSelector("form[name='geo_zones_form'] tr.row"));
+    }
+
+    private void checkCountriesOrder() {
+        List<WebElement> rowCountries = getCountryRows();
         String previousCountryName = "";
         for (int i = 0; i < rowCountries.size(); i++) {
             WebElement cellName = getCountryNameCell(rowCountries.get(i));
@@ -57,15 +66,39 @@ public class MenuTest extends TestBase {
                 assertTrue(countryName.compareTo(previousCountryName) > 0);
             }
             previousCountryName = countryName;
+
+            WebElement cellZones = getZonesAmountCell(rowCountries.get(i));
+            int zonesAmount = Integer.parseInt(cellZones.getAttribute("textContent"));
+            if (zonesAmount != 0) {
+                cellName.findElement(By.cssSelector("a")).click();
+                WebElement zoneTable = driver.findElement(By.id("table-zones"));
+                List<WebElement> zoneNames = zoneTable.findElements(By.cssSelector("input[type='hidden'][name*='[name]']"));
+                compareZoneNames(zoneNames);
+                goToMenuItemPage("Countries");
+                rowCountries = getCountryRows();
+
+            }
         }
     }
+
+    private void compareZoneNames(List<WebElement> zoneNames) {
+        String previousZoneName = "";
+        for (int n = 0; n < zoneNames.size(); n++) {
+            String zoneName = zoneNames.get(n).getAttribute("value");
+            if (n != 0) {
+                assertTrue(zoneName.compareTo(previousZoneName) > 0);
+            }
+            previousZoneName = zoneName;
+        }
+    }
+
 
     private List<WebElement> getCountryRows() {
         return driver.findElements(By.cssSelector("form[name='countries_form'] tr.row"));
     }
 
-    private void goToCountryPage() {
-        driver.findElement(By.xpath("//span[.='Countries']")).click();
+    private void goToMenuItemPage(String title) {
+        driver.findElement(By.xpath(String.format("//span[.='%s']", title))).click();
     }
 
     private void clickMenuItems() {
