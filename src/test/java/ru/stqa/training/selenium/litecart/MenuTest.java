@@ -3,7 +3,10 @@ package ru.stqa.training.selenium.litecart;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
+import ru.stqa.training.selenium.litecart.model.Product;
 
+import java.io.File;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -32,6 +35,68 @@ public class MenuTest extends TestBase {
         login("admin", "admin");
         goToMenuItemPage("Geo Zones");
         checkGeoZonesOrder();
+    }
+
+    @Test
+    public void testAddProduct() {
+        Product product = new Product("Bee", "150810", "10", "src/test/resources/test.png",
+                "15032018", "15032018", "test", "bees for you", "Very useful product");
+        driver.get("http://localhost/litecart/admin/");
+        login("admin", "admin");
+        goToMenuItemPage("Catalog");
+        driver.findElement(By.xpath("//a[.=' Add New Product']")).click();
+        fillGeneralProductPage(product);
+        fillInformationProductPage(product);
+        fillPriceProductPage(product);
+
+        System.out.println("Sucsess");
+
+
+
+
+    }
+
+
+    private void fillGeneralProductPage(Product product) {
+        gotoPageInProductMenu("General");
+        driver.findElement(By.xpath(String.format("//label[.=' %s']/input", product.getStatus()))).click();
+        driver.findElement(By.name("name[en]")).sendKeys(product.getName());
+        driver.findElement(By.name("code")).sendKeys(product.getCode());
+        if ( !driver.findElement(By.cssSelector(String.format("[data-name='%s']", product.getCategory()))).isSelected() ) {
+            driver.findElement(By.cssSelector(String.format("[data-name='%s']", product.getCategory()))).click();
+        }
+        if ( !driver.findElement(By.xpath(String.format("//tr[./td[.='Unisex']]//input[@name='product_groups[]']", product.getProductGroup()))).isSelected() ) {
+            driver.findElement(By.xpath(String.format("//tr[./td[.='Unisex']]//input[@name='product_groups[]']", product.getProductGroup()))).click();
+        }
+        driver.findElement(By.name("quantity")).clear();
+        driver.findElement(By.name("quantity")).sendKeys(product.getQuantity());
+        Select selectQuantityUnit = new Select(driver.findElement(By.name("quantity_unit_id")));
+        selectQuantityUnit.selectByVisibleText(product.getQuantityUnit());
+        Select selectDeliveryStatus = new Select(driver.findElement(By.name("delivery_status_id")));
+        selectDeliveryStatus.selectByVisibleText(product.getDeliveryStatus());
+        Select selectSoldOutStatus = new Select(driver.findElement(By.name("sold_out_status_id")));
+        selectSoldOutStatus.selectByVisibleText(product.getSoldOutStatus());
+        File photo = new File(product.getPhoto());
+        driver.findElement(By.name("new_images[]")).sendKeys(photo.getAbsolutePath());
+        driver.findElement(By.name("date_valid_from")).sendKeys(product.getDateValidFrom());
+        driver.findElement(By.name("date_valid_to")).sendKeys(product.getDateValidTo());
+    }
+
+    private void fillInformationProductPage(Product product) {
+        gotoPageInProductMenu("Information");
+        Select selectManufacturer = new Select(driver.findElement(By.name("manufacturer_id")));
+        selectManufacturer.selectByVisibleText(product.getManufacturer());
+        driver.findElement(By.name("keywords")).sendKeys(product.getKeywords());
+        driver.findElement(By.name("short_description[en]")).sendKeys(product.getShortDescription());
+        driver.findElement(By.className("trumbowyg-editor")).sendKeys(product.getDescription());
+    }
+
+    private void fillPriceProductPage(Product product) {
+        gotoPageInProductMenu("Prices");
+    }
+
+    private void gotoPageInProductMenu (String menuTitle) {
+        driver.findElement(By.xpath(String.format("//ul[@class='index']//a[.='%s']", menuTitle))).click();
     }
 
     private void checkGeoZonesOrder() {
