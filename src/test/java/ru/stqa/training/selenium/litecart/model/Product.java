@@ -18,8 +18,12 @@ public class Product {
     private String keywords;
     private String shortDescription;
     private String description;
+    private String purchasePrice;
+    private String currency = "US Dollars";
+    private String price;
 
-    public Product(String name, String code, String quantity, String photo, String dateValidFrom, String dateValidTo, String keywords, String shortDescription, String description) {
+    public Product(String name, String code, String quantity, String photo, String dateValidFrom, String dateValidTo, String keywords, String shortDescription, String description,
+                   String purchasePrice, String price) {
         this.name = name;
         this.code = code;
         this.quantity = quantity;
@@ -29,6 +33,8 @@ public class Product {
         this.keywords = keywords;
         this.shortDescription = shortDescription;
         this.description = description;
+        this.purchasePrice = purchasePrice;
+        this.price = price;
     }
 
     public String getStatus() {
@@ -174,4 +180,32 @@ public class Product {
         this.description = description;
         return this;
     }
+
+    public String getPurchasePrice() {
+        return purchasePrice;
+    }
+
+    public Product withPurchasePrice(String purchasePrice) {
+        this.purchasePrice = purchasePrice;
+        return this;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public Product withCurrency(String currency) {
+        this.currency = currency;
+        return this;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public Product withPrice(String price) {
+        this.price = price;
+        return this;
+    }
+
 }

@@ -9,6 +9,7 @@ import ru.stqa.training.selenium.litecart.model.Product;
 import java.io.File;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 
@@ -40,20 +41,26 @@ public class MenuTest extends TestBase {
     @Test
     public void testAddProduct() {
         Product product = new Product("Bee", "150810", "10", "src/test/resources/test.png",
-                "15032018", "15032018", "test", "bees for you", "Very useful product");
+                "15032018", "15032018", "test", "bees for you", "Very useful product", "6.55", "9.12");
         driver.get("http://localhost/litecart/admin/");
         login("admin", "admin");
         goToMenuItemPage("Catalog");
+        int itemsBefore = countCatalogItems();
         driver.findElement(By.xpath("//a[.=' Add New Product']")).click();
+        fillProductPages(product);
+        driver.findElement(By.name("save")).click();
+        int itemsAfter = countCatalogItems();
+        assertEquals(itemsBefore + 1, itemsAfter);
+    }
+
+    private int countCatalogItems() {
+        return driver.findElements(By.cssSelector("tr.row")).size();
+    }
+
+    private void fillProductPages(Product product) {
         fillGeneralProductPage(product);
         fillInformationProductPage(product);
         fillPriceProductPage(product);
-
-        System.out.println("Sucsess");
-
-
-
-
     }
 
 
@@ -62,10 +69,10 @@ public class MenuTest extends TestBase {
         driver.findElement(By.xpath(String.format("//label[.=' %s']/input", product.getStatus()))).click();
         driver.findElement(By.name("name[en]")).sendKeys(product.getName());
         driver.findElement(By.name("code")).sendKeys(product.getCode());
-        if ( !driver.findElement(By.cssSelector(String.format("[data-name='%s']", product.getCategory()))).isSelected() ) {
+        if (!driver.findElement(By.cssSelector(String.format("[data-name='%s']", product.getCategory()))).isSelected()) {
             driver.findElement(By.cssSelector(String.format("[data-name='%s']", product.getCategory()))).click();
         }
-        if ( !driver.findElement(By.xpath(String.format("//tr[./td[.='Unisex']]//input[@name='product_groups[]']", product.getProductGroup()))).isSelected() ) {
+        if (!driver.findElement(By.xpath(String.format("//tr[./td[.='Unisex']]//input[@name='product_groups[]']", product.getProductGroup()))).isSelected()) {
             driver.findElement(By.xpath(String.format("//tr[./td[.='Unisex']]//input[@name='product_groups[]']", product.getProductGroup()))).click();
         }
         driver.findElement(By.name("quantity")).clear();
@@ -93,9 +100,15 @@ public class MenuTest extends TestBase {
 
     private void fillPriceProductPage(Product product) {
         gotoPageInProductMenu("Prices");
+        driver.findElement(By.name("purchase_price")).clear();
+        driver.findElement(By.name("purchase_price")).sendKeys(product.getPurchasePrice());
+        Select selectSoldOutStatus = new Select(driver.findElement(By.name("purchase_price_currency_code")));
+        selectSoldOutStatus.selectByVisibleText(product.getCurrency());
+        driver.findElement(By.name("prices[USD]")).clear();
+        driver.findElement(By.name("prices[USD]")).sendKeys(product.getPrice());
     }
 
-    private void gotoPageInProductMenu (String menuTitle) {
+    private void gotoPageInProductMenu(String menuTitle) {
         driver.findElement(By.xpath(String.format("//ul[@class='index']//a[.='%s']", menuTitle))).click();
     }
 
@@ -127,7 +140,7 @@ public class MenuTest extends TestBase {
         for (int i = 0; i < rowCountries.size(); i++) {
             WebElement cellName = getCountryNameCell(rowCountries.get(i));
             String countryName = cellName.getAttribute("textContent");
-            if (i !=0) {
+            if (i != 0) {
                 assertTrue(countryName.compareTo(previousCountryName) > 0);
             }
             previousCountryName = countryName;
