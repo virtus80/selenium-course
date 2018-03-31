@@ -2,12 +2,16 @@ package ru.stqa.training.selenium.litecart.tests;
 
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import ru.stqa.training.selenium.litecart.model.Product;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -51,6 +55,30 @@ public class MenuTest extends TestBase {
         driver.findElement(By.name("save")).click();
         int itemsAfter = countCatalogItems();
         assertEquals(itemsBefore + 1, itemsAfter);
+    }
+
+    @Test
+    public void testOpenNewWindow() {
+        driver.get("http://localhost/litecart/admin/");
+        login("admin", "admin");
+        goToMenuItemPage("Countries");
+        driver.findElement(By.cssSelector("a[title=Edit]")).click();
+        List<WebElement> externalLinks = driver.findElements(By.xpath("//a[./i[contains(@class, 'fa-external-link')]]"));
+        String currentWindow = driver.getWindowHandle();
+        final Set<String> windowsBeforeOpening = driver.getWindowHandles();
+        for (int i = 0; i < externalLinks.size(); i++) {
+            WebElement externalLink = externalLinks.get(i);
+            externalLink.click();
+            String newWindow = wait.until((ExpectedCondition<String>) driver -> {
+                Set<String> newWindows = driver.getWindowHandles();
+                newWindows.removeAll(windowsBeforeOpening);
+                if (newWindows.size() > 0) return newWindows.iterator().next();
+                else return null;
+            });
+            driver.switchTo().window(newWindow);
+            driver.close();
+            driver.switchTo().window(currentWindow);
+        }
     }
 
     private int countCatalogItems() {
