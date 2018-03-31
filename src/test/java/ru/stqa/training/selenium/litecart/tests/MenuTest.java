@@ -62,7 +62,7 @@ public class MenuTest extends TestBase {
         driver.get("http://localhost/litecart/admin/");
         login("admin", "admin");
         goToMenuItemPage("Countries");
-        driver.findElement(By.cssSelector("a[title=Edit]")).click();
+        goToEditCountryPage();
         List<WebElement> externalLinks = driver.findElements(By.xpath("//a[./i[contains(@class, 'fa-external-link')]]"));
         String currentWindow = driver.getWindowHandle();
         final Set<String> windowsBeforeOpening = driver.getWindowHandles();
@@ -79,6 +79,10 @@ public class MenuTest extends TestBase {
             driver.close();
             driver.switchTo().window(currentWindow);
         }
+    }
+
+    private void goToEditCountryPage() {
+        driver.findElement(By.cssSelector("a[title=Edit]")).click();
     }
 
     private int countCatalogItems() {
