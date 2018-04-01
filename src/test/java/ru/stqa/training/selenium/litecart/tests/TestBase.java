@@ -5,10 +5,10 @@ import org.junit.Before;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.Set;
 
 public class TestBase {
 
@@ -54,5 +54,17 @@ public class TestBase {
 
     public boolean areElementsPresent(WebDriver driver, By locator) {
         return driver.findElements(locator).size() > 0;
+    }
+
+    public ExpectedCondition<String> thereIsWindowOtherThan (Set<String> oldWindows) {
+        Set<String> newWindows = driver.getWindowHandles();
+        return new ExpectedCondition<String>() {
+            @Override
+            public String apply(WebDriver driver) {
+                newWindows.removeAll(oldWindows);
+                return newWindows.size() > 0 ?
+                        newWindows.iterator().next() : null;
+            }
+        };
     }
 }

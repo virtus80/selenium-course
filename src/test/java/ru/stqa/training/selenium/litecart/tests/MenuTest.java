@@ -69,17 +69,13 @@ public class MenuTest extends TestBase {
         for (int i = 0; i < externalLinks.size(); i++) {
             WebElement externalLink = externalLinks.get(i);
             externalLink.click();
-            String newWindow = wait.until((ExpectedCondition<String>) driver -> {
-                Set<String> newWindows = driver.getWindowHandles();
-                newWindows.removeAll(windowsBeforeOpening);
-                if (newWindows.size() > 0) return newWindows.iterator().next();
-                else return null;
-            });
+            String newWindow = wait.until(thereIsWindowOtherThan(windowsBeforeOpening));
             driver.switchTo().window(newWindow);
             driver.close();
             driver.switchTo().window(currentWindow);
         }
     }
+
 
     private void goToEditCountryPage() {
         driver.findElement(By.cssSelector("a[title=Edit]")).click();
