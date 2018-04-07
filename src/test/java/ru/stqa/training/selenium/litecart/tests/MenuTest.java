@@ -76,6 +76,28 @@ public class MenuTest extends TestBase {
         }
     }
 
+    @Test
+    public void testBrowserLogOnProductPage() {
+        driver.get("http://localhost/litecart/admin/");
+        login("admin", "admin");
+        driver.get("http://localhost/litecart/admin/?app=catalog&doc=catalog&category_id=1");
+        visitAllProductPages();
+    }
+
+    private void visitAllProductPages() {
+        By productLink = By.xpath("//tr[@class='row']//a[contains(@href, 'edit_product')][not(@title)]");
+        List<WebElement> products = driver.findElements(productLink);
+        for (int i = 0; i < products.size(); i++) {
+            WebElement product = products.get(i);
+            product.click();
+            driver.manage().logs().get("browser").forEach(l -> System.out.println(l));
+            if (i != products.size() - 1){
+                driver.get("http://localhost/litecart/admin/?app=catalog&doc=catalog&category_id=1");
+                products = driver.findElements(productLink);
+            }
+        }
+    }
+
 
     private void goToEditCountryPage() {
         driver.findElement(By.cssSelector("a[title=Edit]")).click();
