@@ -7,6 +7,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import ru.stqa.training.selenium.litecart.pages.BucketPage;
+import ru.stqa.training.selenium.litecart.pages.MainPage;
+import ru.stqa.training.selenium.litecart.pages.ProductPage;
 
 import java.util.Set;
 
@@ -14,9 +17,12 @@ public class TestBase {
 
     public WebDriver driver;
     public WebDriverWait wait;
+    public TestBase app;
+    protected MainPage mainPage;
+    protected ProductPage productPage;
+    protected BucketPage bucketPage;
 
-    @Before
-    public void start() {
+    public TestBase() {
         driver = new ChromeDriver();
 //        driver = new InternetExplorerDriver();
 //        FirefoxOptions options = new FirefoxOptions().setLegacy(true);
@@ -38,6 +44,14 @@ public class TestBase {
 //        driver = new InternetExplorerDriver(caps);
 //        System.out.println(((HasCapabilities) driver).getCapabilities());
         wait = new WebDriverWait(driver, 10);
+        mainPage = new MainPage(driver);
+        productPage = new ProductPage(driver);
+        bucketPage = new BucketPage(driver);
+    }
+
+    @Before
+    public void start() {
+        app = new TestBase();
     }
 
     @After
