@@ -15,8 +15,8 @@ public class ShopMainPageTest extends TestBase {
 
     @Test
     public void testStickerOnImage() {
-        driver.get("http://localhost/litecart/en/");
-        List<WebElement> images = driver.findElements(By.cssSelector("li.product"));
+        app.driver.get("http://localhost/litecart/en/");
+        List<WebElement> images = app.driver.findElements(By.cssSelector("li.product"));
         for (WebElement image : images) {
             List<WebElement> stickers = image.findElements(By.cssSelector("div.sticker"));
             assertEquals(stickers.size(), 1);
@@ -25,8 +25,8 @@ public class ShopMainPageTest extends TestBase {
 
     @Test
     public void testCompareProductPage() {
-        driver.get("http://localhost/litecart/en/");
-        WebElement productOnMainPage = driver.findElement(By.cssSelector("#box-campaigns li.product"));
+        app.driver.get("http://localhost/litecart/en/");
+        WebElement productOnMainPage = app.driver.findElement(By.cssSelector("#box-campaigns li.product"));
         WebElement productNameOnMainPage = getProductAttribute(productOnMainPage, "name");
         WebElement regularPriceOnMainPage = getProductAttribute(productOnMainPage, "regular-price");
         WebElement campaignPriceOnMainPage = getProductAttribute(productOnMainPage, "campaign-price");
@@ -45,7 +45,7 @@ public class ShopMainPageTest extends TestBase {
         assertTrue(getFontSize(campaignPriceOnMainPage) > getFontSize(regularPriceOnMainPage));
 
         productOnMainPage.click();
-        WebElement productOnProductPage = driver.findElement(By.cssSelector("#box-product"));
+        WebElement productOnProductPage = app.driver.findElement(By.cssSelector("#box-product"));
         WebElement productNameOnProductPage = getProductAttribute(productOnProductPage, "title");
         WebElement regularPriceOnProductPage = getProductAttribute(productOnProductPage, "regular-price");
         WebElement campaignPriceOnProductPage = getProductAttribute(productOnProductPage, "campaign-price");

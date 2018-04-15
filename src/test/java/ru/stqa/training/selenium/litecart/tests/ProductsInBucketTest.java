@@ -7,10 +7,10 @@ public class ProductsInBucketTest extends TestBase {
     @Test
     public void testAddDeleteProductsInBucket() {
         for (int i = 1; i<=3; i++) {
-            mainPage.open().gotoProductPage();
-            productPage.addProductToBucket();
+            app.mainPage.open().gotoProductPage();
+            app.productPage.addProductToBucket();
         }
-        productPage.gotoBucket();
-        bucketPage.deleteAllProductsFromBucket();
+        app.productPage.gotoBucket();
+        app.bucketPage.deleteAllProductsFromBucket();
     }
 }
